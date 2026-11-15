@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SAP CRM Test Rehberi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: modern kurumsal ürün; sakin, net, güven veren
+   IDEA: test yöneticisinin kontrol paneli — her cevap bir şema, bir örnek, bir kontrol listesi
+   PICTURE: süreç akış şemaları, aşama zaman çizelgesi, SLA çubuğu, entegrasyon mimarisi
+   COLOUR and TYPE: beyaz zemin, mürekkep #0b0d12, elektrik mavisi #0057ff, durum renkleri; Inter Tight + Inter
+   LAYOUT: masaüstünde sol gezinme + orta sohbet; telefonda çekmece menü, alt sabit giriş */
+:root{color-scheme:light dark;--bg:light-dark(#f6f7fb,#0b0d12);--card:light-dark(#fff,#141821);--ink:light-dark(#0b0d12,#eef0f5);--mut:light-dark(#5d6474,#98a0b3);--line:light-dark(#e4e7ef,#252b38);--soft:light-dark(#eef2fb,#1b2130);--acc:#0057ff;--accs:light-dark(#e6eeff,#14244a);--ok:light-dark(#0f8a4b,#3ccf86);--bad:light-dark(#d1243a,#ff6b7d);--warn:light-dark(#b25e00,#ffb35c);--vio:light-dark(#6a3fd1,#a88bff);--sh:0 1px 2px rgba(10,20,40,.05),0 8px 24px rgba(10,20,40,.06)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:'Inter Tight',Inter,sans-serif;letter-spacing:-.015em;margin:0}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.app{display:grid;grid-template-columns:290px minmax(0,1fr);min-height:100vh}
+aside{position:sticky;top:0;height:100vh;overflow:auto;background:var(--card);border-right:1px solid var(--line);padding:20px 14px 30px}
+.brand{display:flex;gap:10px;align-items:center;padding:0 8px 16px}
+.logo{width:38px;height:38px;border-radius:11px;background:var(--acc);display:grid;place-items:center;flex:0 0 auto}
+.brand b{font:800 17px/1.1 'Inter Tight',sans-serif;display:block}.brand small{color:var(--mut);font-size:13px}
+.nav h4{font-size:13px;color:var(--mut);font-weight:600;margin:18px 8px 6px}
+.nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;border-radius:10px;padding:9px 10px;font-size:14px;font-weight:500;min-height:40px}
+.nav button:hover{background:var(--soft)}
+.nav .dot{width:8px;height:8px;border-radius:50%;background:var(--line);flex:0 0 auto}
+.nav button:hover .dot{background:var(--acc)}
+.cta{width:100%;min-height:46px;border:0;border-radius:12px;background:var(--acc);color:#fff !important;font-weight:700;margin-top:4px}
+.top{display:none}
+.wrap{display:flex;flex-direction:column;min-height:100vh}
+main{flex:1;width:100%;max-width:1000px;margin:0 auto;padding:24px clamp(14px,3vw,32px) 150px}
+.m{margin:18px 0;display:flex}
+.m.u{justify-content:flex-end}
+.m.u .bub{background:var(--ink);color:var(--bg);border-radius:18px 18px 4px 18px;padding:10px 16px;font-weight:600;max-width:80%}
+.m.k .bub{width:100%;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(16px,2.6vw,26px);box-shadow:var(--sh)}
+.lbl{display:inline-flex;gap:6px;align-items:center;font-size:13px;font-weight:600;color:var(--acc);background:var(--accs);border-radius:99px;padding:3px 10px;margin-bottom:10px}
+.bub h2{font-size:clamp(22px,3vw,30px);line-height:1.1;margin-bottom:8px;text-wrap:balance}
+.bub h3{font-size:17px;margin:22px 0 10px}
+.bub p{margin:6px 0;max-width:70ch;color:var(--ink)}
+.lead{color:var(--mut)!important}
+.bub ul,.bub ol{margin:6px 0;padding-left:22px}.bub li{margin:4px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 2px}
+.chip{min-height:40px;padding:7px 14px;border:1px solid var(--line);background:var(--card);border-radius:99px;font-size:14px;font-weight:600;text-align:left}
+.chip:hover{border-color:var(--acc);color:var(--acc)}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.chip.p{background:var(--acc);color:#fff;border-color:var(--acc)}
+/* flow diagram */
+.fig{background:var(--soft);border-radius:16px;padding:18px;margin:14px 0}
+.fig .cap{font-size:13px;color:var(--mut);margin:10px 0 0}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 0}
+.node{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:9px 13px;font-size:14px;font-weight:600;box-shadow:var(--sh);position:relative}
+.node small{display:block;font-weight:500;color:var(--mut);font-size:12px}
+.node.s{border-color:var(--acc);background:var(--accs)}
+.node.e{border-color:var(--ok)}
+.arr{width:28px;height:2px;background:var(--mut);position:relative;margin:0 4px;opacity:.6}
+.arr::after{content:'';position:absolute;right:-1px;top:-4px;border:5px solid transparent;border-left:7px solid var(--mut);border-right:0}
+.branch{display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px;color:var(--mut)}
+.node.x{border-color:var(--bad);color:var(--bad)}
+/* phase timeline */
+.tl{display:flex;overflow-x:auto;gap:0;padding:6px 2px 4px;scrollbar-width:thin}
+.ph{flex:0 0 auto;width:112px;text-align:center;position:relative;padding-top:26px;font-size:12.5px;font-weight:600;background:none;border:0;line-height:1.25}
+.ph::before{content:'';position:absolute;top:9px;left:0;right:0;height:3px;background:var(--line)}
+.ph::after{content:attr(data-n);position:absolute;top:0;left:50%;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;background:var(--card);border:2px solid var(--line);font-size:11px;display:grid;place-items:center;color:var(--mut)}
+.ph.on::after{background:var(--acc);border-color:var(--acc);color:#fff}.ph.on{color:var(--acc)}
+.ph:hover{color:var(--acc)}
+/* v model */
+.vm{display:grid;grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr);gap:8px 0;align-items:center}
+.vm .node{text-align:center}
+.vm .ln{height:2px;border-top:2px dashed var(--mut);opacity:.5}
+.vm .bot{grid-column:1/4;justify-self:center}
+/* arch */
+.arch{display:grid;grid-template-columns:minmax(0,1fr) 90px minmax(0,1fr) 90px minmax(0,1fr);align-items:center}
+.box{background:var(--card);border-radius:14px;border:1.5px solid var(--line);padding:14px;box-shadow:var(--sh)}
+.box b{display:block;font-family:'Inter Tight',Inter,sans-serif;font-size:16px}.box span{font-size:12.5px;color:var(--mut);display:block;margin-top:4px}
+.box.c{border-color:var(--acc)}
+.link{text-align:center;font-size:11.5px;color:var(--mut);line-height:1.2}
+.link i{display:block;height:2px;background:var(--acc);margin:6px 4px;position:relative;opacity:.7}
+.link i::before,.link i::after{content:'';position:absolute;top:-4px;border:5px solid transparent}
+.link i::after{right:-2px;border-left:7px solid var(--acc);border-right:0}.link i::before{left:-2px;border-right:7px solid var(--acc);border-left:0}
+/* sla */
+.sla{display:flex;height:38px;border-radius:10px;overflow:hidden;font-size:12px;font-weight:600;color:#fff}
+.sla div{display:grid;place-items:center;padding:0 4px;text-align:center;line-height:1.1}
+.sla .pause{background:repeating-linear-gradient(45deg,#8a93a6 0 6px,#7a8396 6px 12px)}
+.slaax{display:flex;flex-wrap:wrap;gap:4px 12px;justify-content:space-between;font-size:12px;color:var(--mut);margin-top:6px;position:relative}
+.dl{position:absolute;top:-50px;height:46px;border-left:2px dashed var(--bad)}
+/* scenario cards */
+.scs{display:grid;gap:10px}
+details.sc{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+details.sc[open]{box-shadow:var(--sh);border-color:light-dark(#cdd5e6,#33405a)}
+.sc summary{list-style:none;display:flex;gap:10px;align-items:center;padding:12px 14px;cursor:pointer;min-height:52px}
+.sc summary::-webkit-details-marker{display:none}
+.sc summary::after{content:'';width:8px;height:8px;border-right:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:rotate(45deg);margin-left:auto;flex:0 0 auto;transition:transform .2s}
+.sc[open] summary::after{transform:rotate(-135deg)}
+.sid{font:700 12px/1 ui-monospace,Menlo,monospace;color:var(--mut);white-space:nowrap}
+.st{font-weight:600;font-size:15px}
+.tg{font-size:12px;font-weight:700;border-radius:99px;padding:3px 9px;white-space:nowrap;flex:0 0 auto}
+.tP{color:var(--ok);background:color-mix(in srgb,var(--ok) 13%,transparent)}.tN{color:var(--bad);background:color-mix(in srgb,var(--bad) 13%,transparent)}.tS{color:var(--warn);background:color-mix(in srgb,var(--warn) 15%,transparent)}.tY{color:var(--vio);background:color-mix(in srgb,var(--vio) 14%,transparent)}.tE{color:var(--acc);background:var(--accs)}.tF{color:var(--mut);background:var(--soft)}
+.scb{padding:2px 16px 16px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px}
+.steps{list-style:none;padding:0!important;margin:0!important;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:0 0 12px 34px;font-size:14px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:var(--accs);color:var(--acc);font-size:12px;font-weight:700;display:grid;place-items:center}
+.steps li:not(:last-child)::after{content:'';position:absolute;left:10.5px;top:24px;bottom:2px;width:1px;background:var(--line)}
+.exp{background:color-mix(in srgb,var(--ok) 9%,transparent);border-left:3px solid var(--ok);border-radius:8px;padding:10px 12px;font-size:14px;align-self:start}
+.exp b{display:block;font-size:12.5px;color:var(--ok);margin-bottom:2px}
+/* example card */
+.ex{border:1.5px dashed var(--acc);border-radius:16px;padding:16px;background:light-dark(#fbfcff,#111727)}
+.kv{display:grid;grid-template-columns:130px minmax(0,1fr);gap:8px 14px;font-size:14px}
+.kv dt{color:var(--mut);font-weight:600}.kv dd{margin:0}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--soft);color:var(--mut)}
+.note{font-size:12.5px;color:var(--mut);margin-top:8px}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
+.stat{background:var(--soft);border-radius:14px;padding:14px}
+.stat b{display:block;font:800 clamp(26px,4vw,38px)/1 'Inter Tight',Inter,sans-serif;color:var(--acc)}.stat span{font-size:13px;color:var(--mut)}
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 36px;gap:10px;align-items:center;font-size:13px}
+.bar .tr{height:10px;background:var(--soft);border-radius:99px;overflow:hidden}.bar .tr i{display:block;height:100%;border-radius:99px}
+.bar .n{text-align:right;font-weight:700}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.sev{border-radius:14px;padding:14px;background:var(--soft);border-top:4px solid}
+.sev b{display:block;font-family:'Inter Tight',Inter,sans-serif;margin-bottom:4px}.sev span{font-size:13px;color:var(--mut)}
+.chk{list-style:none;padding:0!important}.chk li{padding-left:28px;position:relative}
+.chk li::before{content:'';position:absolute;left:2px;top:3px;width:16px;height:16px;border-radius:5px;border:2px solid var(--acc)}
+.qs{counter-reset:q;list-style:none;padding:0!important;display:grid;gap:8px}
+.qs li{counter-increment:q;background:var(--soft);border-radius:12px;padding:10px 12px 10px 44px;position:relative;font-size:14.5px;margin:0!important}
+.qs li::before{content:'S' counter(q);position:absolute;left:12px;top:10px;font-weight:800;color:var(--acc);font-size:13px}
+.tip{background:var(--accs);border-radius:12px;padding:12px 14px;font-size:14px;margin:14px 0}
+.tip b{color:var(--acc)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px}
+.mc{background:var(--soft);border:1px solid transparent;border-radius:14px;padding:12px 14px;text-align:left;min-height:64px}
+.mc:hover{border-color:var(--acc)}
+.mc b{display:block;font-size:14.5px}.mc span{font-size:12.5px;color:var(--mut)}
+textarea{width:100%;height:160px;font:13px/1.4 ui-monospace,monospace;background:var(--soft);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px}
+form{position:fixed;left:290px;right:0;bottom:0;padding:12px clamp(14px,3vw,32px) calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 30%)}
+.f{max-width:936px;margin:0 auto;display:flex;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px;box-shadow:var(--sh)}
+input{flex:1;min-height:46px;font:16px Inter,sans-serif;padding:0 12px;border:0;background:none;color:var(--ink);outline:none}
+.send{border:0;border-radius:12px;background:var(--acc);color:#fff;font-weight:700;padding:0 18px;min-height:46px}
+.scrim{display:none}
+@media(max-width:900px){
+.app{grid-template-columns:minmax(0,1fr)}
+aside{position:fixed;inset:0 auto 0 0;width:300px;max-width:86vw;z-index:20;transform:translateX(-102%);transition:transform .25s}
+aside.open{transform:none}
+.scrim.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:15}
+.top{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line);padding:10px 14px}
+.top b{font:800 16px 'Inter Tight',Inter,sans-serif}
+.mb{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center}
+form{left:0}}
+@media(max-width:640px){.scb{grid-template-columns:minmax(0,1fr)}.stats,.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}.kv{grid-template-columns:minmax(0,1fr)}.kv dt{margin-top:6px}
+.arch{grid-template-columns:minmax(0,1fr)}.link{padding:4px 0}.link i{width:2px;height:22px;margin:4px auto}.link i::after{right:-4px;top:auto;bottom:-3px;border:5px solid transparent;border-top:7px solid var(--acc);border-bottom:0}.link i::before{left:-4px;top:-3px;border:5px solid transparent;border-bottom:7px solid var(--acc);border-top:0}
+.vm{grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr)}.vm .node{font-size:12.5px;padding:8px}
+.flow .arr{width:16px}.sc summary{flex-wrap:wrap}.bar{grid-template-columns:84px minmax(0,1fr) 30px}}
+@media(prefers-reduced-motion:no-preference){.m{animation:in .3s ease-out}@keyframes in{from{opacity:0;transform:translateY(8px)}}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside id="side">
+<div class="brand"><div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div><b>SAP CRM Test Rehberi</b><small>Kural tabanlı · veri göndermez</small></div></div>
+<button class="cta" type="button" data-q="plan oluştur">Test planı oluştur</button>
+<div class="nav" id="nav"></div>
+</aside>
+<div class="scrim" id="scrim"></div>
+<div class="wrap">
+<div class="top"><button class="mb" id="mb" type="button" aria-label="Menü"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><b>SAP CRM Test Rehberi</b></div>
+<main id="chat" aria-live="polite"></main>
+</div>
+</div>
+<form id="f"><div class="f"><input id="q" autocomplete="off" placeholder="Örn: teklif için negatif senaryolar" aria-label="Soru yaz"><button class="send" type="submit">Sor</button></div></form>
+<script>
+{
+const T={P:'Pozitif',N:'Negatif',S:'Sınır',Y:'Yetki',E:'Entegrasyon',F:'Performans'};
+const s=(t,y,a,e)=>({t,y,a,e});
+const M=[
+{id:'BP',n:'İş ortağı, hesap ve kontak',ent:'hesap',kw:['is ortagi','hesap','kontak','musteri','account','contact','business partner','muhatap','adres','bp'],
+q:['Kurumsal ve bireysel müşteri ayrımı var mı, hangi BP rolleri kullanılacak?','Mükerrer kayıt kontrolü hangi alanlara göre yapılacak (ünvan, vergi no, telefon)?','Numara aralığını CRM mi ERP mi belirliyor?','Grup şirketleri için hesap hiyerarşisi gerekiyor mu?','KVKK iletişim izinleri hangi alanda, nasıl tutulacak?'],
+sc:[s('Yeni kurumsal hesap oluştur','P','Hesap ekranını aç → zorunlu alanları, adres ve iletişim bilgilerini gir → kaydet','Hesap numarası atanır, kayıt aramada bulunur'),
+s('Kontak oluştur ve hesaba bağla','P','Kontak oluştur → hesap ilişkisi ekle → departman ve görev gir','İlişki hem hesapta hem kontakta görünür'),
+s('Mükerrer hesap kontrolü','N','Var olan ünvan ve vergi no ile yeni hesap açmayı dene','Uyarı verilir, olası eşleşmeler listelenir'),
+s('Vergi no boş veya hatalı','N','Vergi no alanını boş bırak / harf gir → kaydet','Hata mesajı çıkar, kayıt oluşmaz'),
+s('Vergi no / TCKN uzunluk sınırı','S','9, 10, 11 ve 12 haneli değer dene','Yalnızca geçerli uzunluk ve kontrol hanesi kabul edilir'),
+s('Türkçe ve özel karakterler','S','Ünvana “Çağlar Şişli Gıda Ltd. Şti. & Ortakları” yaz → kaydet → ara','Karakterler bozulmadan kaydedilir, aramada bulunur'),
+s('Hesap hiyerarşisi','P','Ana hesap altına iki alt hesap bağla','Ağaç doğru görünür, raporlarda toplamlar ana hesaba yuvarlanır'),
+s('Hesabın ERP/S4 tarafına aktarımı','E','Hesabı kaydet → ERP’de müşteri kaydını kontrol et','Aynı numara ve verilerle oluşur, kuyrukta hata yok'),
+s('Hesabı bloke et','P','Hesaba satış blokesi koy → yeni sipariş açmayı dene','Sipariş engellenir, nedeni gösterilir'),
+s('Başka bölgenin hesabını düzenleme','Y','Bölge A temsilcisi ile Bölge B hesabını aç → düzenle','Erişim reddedilir veya salt okunur açılır'),
+s('İletişim izni olmayan kontak','P','İletişim iznini “Hayır” yap → kampanya hedef grubuna eklemeyi dene','Kontak hedef gruptan dışlanır')]},
+{id:'ACT',n:'Aktivite yönetimi',ent:'aktivite',kw:['aktivite','randevu','gorev','activity','takvim','ziyaret','arama kaydi','outlook','groupware'],
+q:['Randevular Outlook/Exchange ile senkronize edilecek mi?','Aktivite türleri ve zorunlu alanları neler (ziyaret, telefon, e-posta)?','Geçmiş tarihli aktivite girilebilecek mi?','Özel (private) aktivite gereksinimi var mı?'],
+sc:[s('Müşteri ziyareti randevusu oluştur','P','Hesaptan randevu aç → tarih, katılımcı, konu gir → kaydet','Takvimde ve hesap geçmişinde görünür'),
+s('Outlook senkronizasyonu','E','CRM’de randevu oluştur → Outlook’u kontrol et → Outlook’ta saati değiştir','İki yönlü güncellenir, çift kayıt oluşmaz'),
+s('Başkasına görev atama','P','Görev oluştur → sorumlu olarak başka kullanıcıyı seç','Atanan kişinin listesine düşer, bildirim gider'),
+s('Bitiş tarihi başlangıçtan önce','N','Bitişi başlangıçtan önceye ayarla → kaydet','Hata mesajı, kayıt oluşmaz'),
+s('Tamamlanan aktiviteyi yeniden açma','N','Durumu “Tamamlandı” yap → tekrar “Açık” yapmayı dene','Kurala göre engellenir veya yetkili kullanıcıya açıktır'),
+s('Tekrarlayan randevu','S','Her hafta, 52 tekrar oluştur → tek tekrarı sil','Seri doğru oluşur, tekil silme seriyi bozmaz'),
+s('Özel aktivite gizliliği','Y','A kullanıcısı özel aktivite girer → B kullanıcısı aynı hesabı açar','B konu ve detayları göremez')]},
+{id:'LEAD',n:'Lead (potansiyel müşteri)',ent:'lead',kw:['lead','potansiyel','aday musteri','kalifikasyon','nitelendirme'],
+q:['Lead kaynakları neler (web formu, fuar, kampanya, çağrı merkezi)?','Kalifikasyon seviyeleri ve puanlama kuralı nedir?','Otomatik atama kuralı var mı (bölge, sektör)?','Lead hangi koşulda fırsata dönüşür?'],
+sc:[s('Manuel lead oluştur','P','Lead aç → kaynak, ilgi alanı, kontak gir → kaydet','Lead numarası atanır, sorumlu belirlenir'),
+s('Kalifikasyon ilerletme','P','Soğuk → ılık → sıcak yap','Durum ve tarih geçmişi kaydedilir'),
+s('Lead’den fırsata dönüşüm','P','Sıcak lead’den “Fırsat oluştur” seç','Fırsat oluşur, lead ile bağlantı ve veriler aktarılır'),
+s('Otomatik atama kuralı','P','İzmir bölgesine ait lead oluştur','Doğru satış ekibine atanır'),
+s('Ret nedeni zorunluluğu','N','Lead’i ret nedeni girmeden reddet','Ret nedeni istenir, kayıt kapanmaz'),
+s('Toplu lead içe aktarma','F','1.000 satırlık dosyayı içe aktar (biri hatalı)','Hatalı satır raporlanır, diğerleri yüklenir'),
+s('Kampanya yanıtından lead','E','Kampanya e-postasına yanıt simüle et','Kampanya referanslı lead oluşur')]},
+{id:'OPP',n:'Fırsat (opportunity) ve pipeline',ent:'fırsat',kw:['firsat','opportunity','pipeline','satis asamasi','satis hunisi','tahmin','forecast'],
+q:['Satış aşamaları ve her aşamanın olasılık yüzdesi nedir?','Kayıp/kazanç nedeni zorunlu mu?','Satış ekibi ve partner fonksiyonları neler?','Pipeline raporu hangi para biriminde gösterilecek?'],
+sc:[s('Fırsat oluştur','P','Hesaptan fırsat aç → beklenen gelir, kapanış tarihi, ürün ekle','Fırsat kaydedilir, pipeline’da görünür'),
+s('Aşama ilerletme ve olasılık','P','Aşamayı “Teklif” yap','Olasılık otomatik güncellenir, ağırlıklı gelir doğru hesaplanır'),
+s('Aşama atlama','N','“Keşif”ten doğrudan “Kazanıldı”ya geç','Kurala göre engellenir veya uyarı verilir'),
+s('Kaybedildi nedeni','N','Neden girmeden “Kaybedildi” yap','Neden alanı zorunlu olarak istenir'),
+s('Geçmiş kapanış tarihi','S','Kapanış tarihini dün yap','Uyarı verilir ve raporda “gecikmiş” işaretlenir'),
+s('Fırsattan teklif oluştur','E','“Takip belgesi → Teklif” seç','Ürün, miktar ve müşteri teklife aktarılır'),
+s('Döviz çevrimi','S','EUR fırsat gir → TRY raporda görüntüle','Geçerli kurla doğru çevrilir'),
+s('Satış ekibi görünürlüğü','Y','Ekip dışı temsilci fırsatı arar','Fırsatı göremez')]},
+{id:'ORD',n:'Teklif ve satış siparişi',ent:'teklif',kw:['teklif','quotation','siparis','order','sales order','satis siparisi','iade','fatura','atp','stok','kredi limit'],
+q:['Teklif ve sipariş CRM’de mi ERP/S4’te mi oluşacak?','Kredi limiti ve stok (ATP) kontrolü nerede çalışacak?','Teklif çıktı formu (PDF) ve imza gereksinimi var mı?','Sipariş iptal/ret nedenleri neler?'],
+sc:[s('Teklif oluştur ve PDF çıktı al','P','Teklif aç → ürün ve miktar ekle → çıktı al','Fiyatlar doğru, PDF şirket şablonunda'),
+s('Teklifi siparişe çevir','P','Kabul edilen tekliften sipariş oluştur','Tüm kalemler aktarılır, referans tutulur'),
+s('Geçerliliği dolmuş teklif','S','Geçerlilik tarihi geçmiş teklifi siparişe çevir','Engellenir veya yeniden onay istenir'),
+s('Kredi limiti aşımı','N','Limiti aşan tutarda sipariş gir','Sipariş bloke edilir, uyarı verilir'),
+s('Stok yetersiz (ATP)','N','Stoktan fazla miktar iste','Teyit edilen miktar ve tarih gösterilir'),
+s('Eksik veri kontrolü','N','Teslimat adresi olmadan kaydet','Eksik veri listesi çıkar, sipariş ERP’ye gitmez'),
+s('Siparişin ERP/S4’e aktarımı','E','Siparişi kaydet → ERP’de kontrol et → teslimat ve fatura oluştur','Durum CRM’e geri yansır'),
+s('Sipariş iptali','P','Ret nedeni ile kalemi iptal et','ERP’de de iptal edilir, raporlardan düşer'),
+s('Sıfır ve negatif miktar','S','Miktar 0 ve -1 gir','Kabul edilmez')]},
+{id:'PRC',n:'Fiyatlandırma ve indirimler',ent:'fiyat koşulu',kw:['fiyat','pricing','indirim','iskonto','kosul','condition','kdv','vergi','skala','marj'],
+q:['Fiyat koşulları ERP’den mi geliyor, CRM’de mi bakılıyor?','Manuel indirim limiti ve onay eşiği nedir?','Miktar skalaları ve müşteri özel fiyatlar var mı?','Yuvarlama ve çoklu para birimi kuralları neler?'],
+sc:[s('Liste fiyatı','P','Standart müşteri için ürün ekle','Liste fiyatı doğru gelir'),
+s('Müşteriye özel fiyat','P','Özel fiyat tanımlı müşteri ile aynı ürünü ekle','Özel fiyat liste fiyatını ezer'),
+s('Miktar skalası sınırları','S','Skala 100’den başlıyorsa 99, 100 ve 101 adet dene','Doğru skala fiyatı uygulanır'),
+s('Limit üstü manuel indirim','N','Yetkiden yüksek indirim gir','Onay iş akışı başlar veya engellenir'),
+s('KDV hesaplama','P','%1, %10, %20 KDV oranlı ürünler ekle','Vergi tutarları ve toplam doğru'),
+s('Fiyat geçerlilik tarihi','S','Geçerlilik bitiş günü ve ertesi gün dene','Bitiş günü eski, ertesi gün yeni fiyat'),
+s('CRM ve ERP fiyat tutarlılığı','E','Aynı siparişi iki sistemde karşılaştır','Net tutar kuruşu kuruşuna aynı'),
+s('Kâr marjı alanının gizliliği','Y','Satış temsilcisi rolüyle fiyat detayına bak','Maliyet ve marj görünmez')]},
+{id:'SRV',n:'Servis talebi, şikayet ve SLA',ent:'servis talebi',kw:['servis','ticket','talep','sla','sikayet','complaint','case','cagri merkezi','destek','eskalasyon','bilgi bankasi'],
+q:['Talep hangi kanallardan gelecek (e-posta, telefon, portal, sosyal medya)?','SLA süreleri öncelik bazında ne kadar, iş saatleri ve tatiller nasıl?','Kategori ağacı ve otomatik atama kuralları neler?','Şikayetten iade/kredi notu süreci CRM’de mi?'],
+sc:[s('E-postadan talep oluşumu','E','Destek adresine e-posta gönder','Talep otomatik açılır, müşteri eşleşir, onay e-postası gider'),
+s('Kategoriye göre atama','P','“Fatura itirazı” kategorisinde talep aç','Doğru ekibe atanır'),
+s('SLA süre hesabı','P','Cuma 17:00’de yüksek öncelikli talep aç','Hedef süre iş saati ve hafta sonu dikkate alınarak hesaplanır'),
+s('Resmi tatilde SLA','S','Bayram arifesinde talep aç','Tatil takvimi doğru uygulanır'),
+s('Müşteri yanıtı beklenirken saat durması','P','Durumu “Müşteri bekleniyor” yap → 2 gün bekle','SLA saati durur, devam edince kaldığı yerden sürer'),
+s('SLA ihlali eskalasyonu','N','Talebi süre dolana kadar işlemeden beklet','Yöneticiye eskalasyon ve bildirim gider'),
+s('Kapatılmış talebi yeniden açma','N','Kapalı talebe müşteri yanıt verir','Kurala göre yeniden açılır veya yeni talep bağlanır'),
+s('Şikayetten kredi notu','E','Şikayet kabul edilir → kredi notu talebi oluştur','ERP’de kredi notu oluşur, şikayete bağlanır'),
+s('Bilgi bankası önerisi','P','Bilinen bir sorun kategorisinde talep aç','İlgili çözüm makaleleri önerilir')]},
+{id:'MKT',n:'Pazarlama, segmentasyon ve kampanya',ent:'kampanya',kw:['kampanya','pazarlama','segment','hedef grup','marketing','e-posta gonderim','bulten','abonelik'],
+q:['Segmentasyon hangi kriterlerle yapılacak?','E-posta gönderim aracı nedir, test gönderimi nasıl yapılacak?','KVKK/İYS izin kontrolü nerede uygulanacak?','Kampanya maliyeti ve getirisi ölçülecek mi?'],
+sc:[s('Segment oluştur','P','“İzmir, perakende, son 12 ayda alışveriş” filtresiyle segment yap','Beklenen kişi sayısı manuel sorguyla aynı'),
+s('İzinsiz kişileri dışlama','N','İzni olmayan kişileri içeren segmenti kampanyaya bağla','Bu kişiler gönderim listesinden çıkar'),
+s('Test gönderimi','P','Yalnızca test hedef grubuna gönder','Kişiselleştirme alanları (ad, ünvan) doğru dolar'),
+s('Abonelikten çıkma','P','E-postadaki çıkış linkine tıkla','İzin kaydı güncellenir, sonraki gönderime dahil edilmez'),
+s('Kampanya yanıtı','E','Yanıt veya form doldurmayı simüle et','Lead/aktivite oluşur, kampanyaya bağlanır'),
+s('Büyük hedef grup','F','100.000 kişilik hedef grup oluştur','Kabul edilebilir sürede tamamlanır'),
+s('Kampanya onayı','Y','Onaysız kampanyayı yayınlamayı dene','Yayın engellenir')]},
+{id:'INT',n:'ERP/S4 entegrasyonu ve middleware',ent:'aktarım mesajı',kw:['entegrasyon','erp','s4','s/4','idoc','bdoc','middleware','replikasyon','api','odata','rest','soap','kuyruk','cpi','pi/po','arayuz'],
+q:['Hangi nesneler hangi yönde aktarılıyor (BP, malzeme, fiyat, sipariş, fatura)?','Aktarım anlık mı, toplu (batch) mı?','Hata kuyruğu kim tarafından, hangi araçla izlenecek?','Karşı sistem kapalıyken mesajlar ne olacak?'],
+sc:[s('BP CRM → ERP','E','CRM’de hesap oluştur','ERP’de aynı verilerle oluşur'),
+s('Malzeme ERP → CRM','E','ERP’de yeni malzeme aç','CRM’de ürün olarak görünür'),
+s('Sipariş durumu geri bildirimi','E','ERP’de teslimat ve fatura oluştur','CRM siparişinde durum güncellenir'),
+s('Alan eşleme kontrolü','P','Tüm eşlenen alanları dolu bir kaydı aktar','Her alan hedefte doğru yerde'),
+s('Karşı sistem kapalı','N','ERP bağlantısını kes → sipariş kaydet → bağlantıyı aç','Mesaj kuyrukta bekler, sonra işlenir, veri kaybı yok'),
+s('Hatalı mesajın yeniden işlenmesi','N','Eksik veriyle mesaj gönder → düzelt → yeniden işle','Hata izlenebilir, düzeltme sonrası başarıyla işlenir'),
+s('Eşzamanlı güncelleme','E','Aynı kaydı iki sistemde aynı anda değiştir','Çakışma kurala göre çözülür, kayıt bozulmaz'),
+s('Toplu ilk yükleme','F','50.000 kayıt yükle','Sayılar eşleşir, süre cutover penceresine sığar'),
+s('API yetki hatası','Y','Geçersiz kimlik bilgisiyle API çağır','401/403 döner, loglanır')]},
+{id:'AUTH',n:'Yetki ve roller',ent:'rol',kw:['yetki','rol','authorization','pfcg','erisim','profil','sod','gorev ayriligi','guvenlik','kullanici'],
+q:['Hangi roller var (temsilci, yönetici, çağrı merkezi, admin, salt okunur)?','Veri erişimi neye göre kısıtlanacak (bölge, ekip, satış organizasyonu)?','Gizli tutulacak alanlar neler (marj, maliyet)?','Görev ayrılığı (SoD) kuralları neler?'],
+sc:[s('Rol menü kontrolü','Y','Her rol ile giriş yap','Sadece o role ait ekranlar görünür'),
+s('Bölge bazlı veri kısıtı','Y','Temsilci kendi bölgesi dışındaki kaydı arar','Kayıt listelenmez'),
+s('Yönetici ekip görünürlüğü','Y','Yönetici ile ekip kayıtlarını aç','Ekibin tüm kayıtları görünür'),
+s('Salt okunur rol','Y','Salt okunur rolle kaydı düzenlemeyi dene','Düzenleme kapalı'),
+s('Silme yetkisi','N','Temsilci ile hesap silmeyi dene','Engellenir'),
+s('Görev ayrılığı','Y','İndirim oluşturan kişi kendi indirimini onaylamaya çalışır','Engellenir'),
+s('Rol değişikliğinin etkisi','P','Kullanıcının rolünü değiştir → yeniden giriş','Yeni yetkiler geçerli olur'),
+s('Toplu dışa aktarma','Y','Yetkisiz rolle listeyi Excel’e aktar','Engellenir')]},
+{id:'WF',n:'İş akışı ve onaylar',ent:'onay',kw:['workflow','is akisi','onay','akis','approval','vekil','eskalasyon'],
+q:['Hangi işlemler onay gerektiriyor ve eşikler ne?','Kaç seviyeli onay var?','Onaycı izindeyken vekil nasıl belirleniyor?','Onay sonrası değişiklik olursa ne olmalı?'],
+sc:[s('Eşik altı işlem','P','Eşiğin altında indirim gir','Onaysız ilerler'),
+s('Eşik üstü işlem','P','Eşiğin üstünde indirim gir','Onaycının gelen kutusuna düşer, bildirim gider'),
+s('Tam eşik değeri','S','Tam eşik tutarını gir','Kurala uygun davranır (dahil mi hariç mi belirtilmeli)'),
+s('Red ve geri dönüş','N','Onaycı reddeder','Talep sahibine nedeniyle döner'),
+s('Vekil onaycı','P','Onaycıyı izinli yap','Vekile yönlenir'),
+s('Zaman aşımı','N','Onayı belirlenen süre bekletin','Eskalasyon tetiklenir'),
+s('Onay sonrası değişiklik','N','Onaylanan teklifte fiyatı değiştir','Onay sıfırlanır, yeniden onay istenir')]},
+{id:'REP',n:'Raporlama ve analitik',ent:'rapor',kw:['rapor','analitik','bw','dashboard','kpi','analytics','gosterge','excel aktarim'],
+q:['Kritik raporlar ve KPI tanımları neler?','Veri gerçek zamanlı mı, gecelik mi?','Raporlar yetkiye göre filtrelenecek mi?','Dışa aktarım gereksinimi var mı?'],
+sc:[s('Pipeline raporu doğruluğu','P','Rapor toplamını kayıt listesinden manuel hesapla','Toplamlar birebir aynı'),
+s('Filtre kombinasyonları','P','Tarih, bölge, temsilci filtrelerini birlikte uygula','Sonuçlar doğru'),
+s('Tarih aralığı sınırı','S','Ayın son günü 23:59 kaydı ile filtre uç noktaları','Kayıt doğru aya düşer'),
+s('Yetkiye göre veri','Y','Temsilci ve yönetici aynı raporu açar','Her biri sadece yetkili verisini görür'),
+s('Büyük veri','F','2 yıllık veriyle rapor çalıştır','Hedef sürede açılır'),
+s('Excel aktarımı','P','Raporu dışa aktar','Türkçe karakterler ve sayı formatları bozulmaz')]},
+{id:'UI',n:'Arayüz (Web UI, Fiori, mobil)',ent:'ekran',kw:['arayuz','ui','fiori','web ui','mobil','ekran','kullanilabilirlik','tarayici','performans','hiz'],
+q:['Hangi tarayıcılar ve cihazlar destekleniyor?','Mobil kullanım (tablet, telefon) var mı?','Ekran kişiselleştirme gereksinimi var mı?','Sayfa açılış süresi hedefi nedir?'],
+sc:[s('Zorunlu alan işaretleri','P','Tüm ana ekranları gez','Zorunlu alanlar işaretli ve tutarlı'),
+s('Arama ve gelişmiş arama','P','Kısmi ad, joker karakter ile ara','Beklenen sonuçlar gelir'),
+s('Tarayıcı uyumluluğu','P','Chrome, Edge, Safari ile ana akışları çalıştır','Görünüm ve işlevler aynı'),
+s('Mobil kullanım','P','Telefonda kayıt oluştur','Ekran taşmaz, işlem tamamlanır'),
+s('Oturum zaman aşımı','N','Formu doldur → zaman aşımı bekle → kaydet','Uyarı verilir, veri kaybı minimum'),
+s('Türkçe çeviri','P','Arayüz dilini Türkçe yap','Çevrilmemiş etiket ve hata mesajı kalmaz'),
+s('Sayfa açılış süresi','F','Ana ekranları 10 kez aç, süreyi ölç','Hedef sürenin altında')]},
+{id:'MIG',n:'Veri göçü (migration)',ent:'göç edilen kayıt',kw:['migration','goc','veri tasima','aktarim','lsmw','migration cockpit','temizlik','veri kalitesi','eski sistem','legacy'],
+q:['Hangi nesneler, kaç yıllık veri taşınacak?','Açık kayıtlar (açık fırsat, açık talep) taşınacak mı?','Veri temizliğini kim yapacak, kabul kriteri ne?','Kaç deneme göçü (mock) yapılacak?'],
+sc:[s('Kayıt sayısı mutabakatı','P','Kaynak ve hedef sayıları nesne bazında karşılaştır','Fark sıfır veya açıklanmış'),
+s('Alan bazlı örnekleme','P','Rastgele 50 kaydı alan alan karşılaştır','Tüm alanlar aynı'),
+s('İlişki bütünlüğü','P','Kontak-hesap, fırsat-hesap bağlarını kontrol et','Yetim kayıt yok'),
+s('Mükerrer kayıt','N','Kaynakta mükerrer olan kayıtları yükle','Kurala göre birleştirilir veya raporlanır'),
+s('Eksik zorunlu alan','N','Zorunlu alanı boş kayıt yükle','Hata raporuna düşer'),
+s('Açık kayıtların durumu','P','Açık fırsat ve talepleri taşı','Durum, sorumlu ve tarihler korunur'),
+s('Tekrar çalıştırılabilirlik','E','Göçü ikinci kez çalıştır','Çift kayıt oluşmaz'),
+s('Süre ölçümü','F','Tam hacimle prova yap','Cutover penceresine sığar')]}
+];
+const PH=[
+{id:'REQ',n:'Gereksinim ve fit-gap',kw:['gereksinim','fit gap','fit-gap','analiz','blueprint','explore','kapsam'],d:'Testin temeli. Her gereksinim ölçülebilir kabul kriteriyle yazılır ve bir test senaryosuna bağlanır.',c:['Gereksinim listesi ID’li ve onaylı mı?','Her gereksinimin kabul kriteri yazıldı mı?','Gereksinim ↔ test izlenebilirlik matrisi (RTM) hazır mı?','Standart dışı geliştirmeler (gap) ayrıca listelendi mi?']},
+{id:'UT',n:'Birim test',kw:['birim','unit','gelistirici testi','abap unit'],d:'Geliştirici her geliştirmeyi (rapor, arayüz, dönüşüm, uyarlama, form, iş akışı) kendi ortamında test eder.',c:['Her geliştirme için birim test kanıtı (ekran görüntüsü) var mı?','Kod incelemesi yapıldı mı?','Negatif girdi ve boş değer kontrolleri yapıldı mı?','Taşıma (transport) listesi güncel mi?']},
+{id:'FUT',n:'Fonksiyonel test',kw:['fonksiyonel','functional','fut','string test'],d:'Danışman tek modül içindeki süreçleri test eder. Bu rehberdeki modül senaryolarının çoğu burada koşulur.',c:['Pozitif, negatif ve sınır senaryoları var mı?','Test verisi önceden hazırlandı mı?','Her hata kayda girildi mi?','Senaryolar gereksinimlere bağlı mı?']},
+{id:'SIT',n:'Entegrasyon testi (SIT)',kw:['sit','entegrasyon testi','system integration','sistem entegrasyon'],d:'CRM ile ERP/S4, middleware ve üçüncü parti sistemlerin birlikte çalışması test edilir.',c:['Tüm arayüzler ve yönleri listelendi mi?','Hata ve yeniden işleme senaryoları var mı?','Karşı sistemler test ortamında hazır mı?','İzleme araçları ve sorumlular belli mi?']},
+{id:'E2E',n:'Uçtan uca test',kw:['uctan uca','e2e','end to end','end-to-end','surec testi'],d:'Gerçek iş süreci baştan sona, sistemler ve roller arasında koşulur.',c:['Ana süreçler (lead-to-cash vb.) tanımlı mı?','Her adımın rolü belli mi?','Gerçekçi test verisi var mı?','Bir adımın çıktısı diğerinin girdisi olarak doğrulanıyor mu?']},
+{id:'REG',n:'Regresyon testi',kw:['regresyon','regression','yan etki','geri donus testi'],d:'Yeni değişikliğin çalışan bir şeyi bozmadığını kanıtlar. Otomasyona en uygun alandır.',c:['Kritik süreçlerden oluşan regresyon seti var mı?','Her taşıma/sürüm sonrası koşuluyor mu?','Otomasyon kapsamı belli mi?','Sonuçlar raporlanıyor mu?']},
+{id:'PERF',n:'Performans ve yük testi',kw:['performans','yuk','load','stres','stress','hiz','yavas','eszamanli kullanici'],d:'Gerçekçi kullanıcı sayısı ve veri hacmiyle sistemin yanıt sürelerini ölçer.',c:['Eşzamanlı kullanıcı sayısı ve hedef yanıt süreleri belli mi?','Üretime benzer veri hacmi var mı?','Toplu işler (batch) ve arayüzler dahil mi?','Ölçüm aracı ve sorumlusu belli mi?']},
+{id:'SEC',n:'Güvenlik ve yetki testi',kw:['guvenlik testi','security','penetrasyon','sizma','kvkk','gdpr','log'],d:'Rollerin, veri kısıtlarının ve kişisel veri korumasının doğru çalıştığını kanıtlar.',c:['Her rol için pozitif ve negatif yetki testi var mı?','Görev ayrılığı (SoD) çatışmaları kontrol edildi mi?','Kişisel veri maskeleme ve silme talepleri test edildi mi?','Değişiklik logları tutuluyor mu?']},
+{id:'MIGT',n:'Veri göçü testi',kw:['goc testi','mock','deneme gocu','migration test'],d:'Taşınan verinin eksiksiz, doğru ve kullanılabilir olduğunu en az iki prova ile kanıtlar.',c:['En az iki deneme göçü planlandı mı?','Mutabakat raporları hazır mı?','İş birimi örneklem onayı veriyor mu?','Süre cutover penceresine sığıyor mu?']},
+{id:'UAT',n:'Kullanıcı kabul testi (UAT)',kw:['uat','kabul','user acceptance','kullanici testi','is birimi testi'],d:'İş birimi, sistemin günlük işini yapmaya hazır olduğunu onaylar.',c:['Senaryolar iş dilinde mi yazıldı?','Kullanıcılar eğitildi mi?','Kabul kriterleri ve imza süreci belli mi?','Açık kritik hata kalmadı mı?']},
+{id:'CUT',n:'Cutover ve canlı geçiş provası',kw:['cutover','canli gecis','go live','go-live','prova','dress rehearsal','gecis'],d:'Canlıya geçiş adımları saat saat prova edilir, geri dönüş planı test edilir.',c:['Saat saat cutover planı var mı?','Geri dönüş (rollback) planı test edildi mi?','Canlı ortamda smoke test listesi hazır mı?','Go/no-go kriterleri yazılı mı?']},
+{id:'HYP',n:'Canlı sonrası destek (hypercare)',kw:['hypercare','canli sonrasi','destek donemi','stabilizasyon'],d:'İlk haftalarda yoğun izleme, hızlı hata çözümü ve kullanıcı desteği.',c:['Destek ekibi ve vardiyalar belli mi?','Arayüz ve kuyruk izleme günlük yapılıyor mu?','Hata öncelik ve çözüm süreleri tanımlı mı?','Kapanış kriterleri belli mi?']}
+];
+const FL=[
+{n:'Lead’den tahsilata (lead-to-cash)',a:['Kampanya veya web formundan lead oluşur','Lead nitelendirilir ve fırsata dönüştürülür','Fırsata ürün ve beklenen gelir eklenir, aşamalar ilerletilir','Fırsattan teklif oluşur, fiyat ve indirim onayı alınır','Teklif siparişe çevrilir, kredi ve stok kontrolü yapılır','Sipariş ERP/S4’e aktarılır, teslimat ve fatura kesilir','Durum CRM’e geri yansır, fırsat “Kazanıldı” kapanır','Pipeline ve satış raporlarında sonuç doğrulanır']},
+{n:'Kampanyadan gelire',a:['Segment ve hedef grup oluşturulur, izinsizler dışlanır','Kampanya onaylanır ve test gönderimi yapılır','Gönderim yapılır, yanıtlar lead’e dönüşür','Lead’ler satış ekibine atanır ve fırsata çevrilir','Kampanya etkisi (maliyet, gelir) raporda ölçülür']},
+{n:'Talepten çözüme',a:['Müşteri e-posta veya telefonla talep açar','Talep kategorize edilir ve doğru ekibe atanır','SLA süresi başlar, öncelik belirlenir','Uzman bilgi bankasını kullanarak çözer veya üst seviyeye aktarır','Çözüm müşteriye bildirilir, talep kapanır','Memnuniyet anketi gönderilir, SLA raporu doğrulanır']},
+{n:'Şikayetten kredi notuna',a:['Müşteri ürün/fatura şikayeti açar','Şikayet incelenir ve onaya gönderilir','Onaylanınca iade veya kredi notu talebi oluşur','ERP/S4’te kredi notu kesilir','Şikayet kapanır, müşteri bakiyesi doğrulanır']}
+];
+const G=[
+['N','Zorunlu alanlar boşken {e} kaydet','Hata mesajı çıkar, kayıt oluşmaz'],
+['N','Geçersiz formatta veri gir (31.02 tarihi, negatif sayı, harfli telefon)','Alan bazında anlaşılır hata mesajı'],
+['S','Metin alanına izin verilen uzunluğun 1 fazlasını gir','Kesilmez, kullanıcı uyarılır'],
+['S','Türkçe karakter, emoji ve özel karakter (& < > \' ") gir','Bozulmadan kaydedilir ve görüntülenir'],
+['Y','Yetkisiz rolle {e} oluştur / değiştir / sil','İşlem engellenir, yetki hatası loglanır'],
+['Y','Salt okunur rolle {e} düzenlemeyi dene','Alanlar kapalıdır'],
+['E','Aynı {e} kaydını iki kullanıcı aynı anda düzenler','İkincisine kilit mesajı gösterilir, veri ezilmez'],
+['P','{e} kaydını kopyalayarak yeni kayıt oluştur','Kopyalanmaması gereken alanlar (numara, durum) boş gelir'],
+['P','{e} kaydında değişiklik yap → değişiklik geçmişine bak','Eski ve yeni değer, kullanıcı ve zaman kaydedilir'],
+['N','Oturum zaman aşımından sonra {e} kaydet','Uyarı verilir, girilen veri korunur veya kullanıcı bilgilendirilir'],
+['F','1.000+ {e} kaydı listele, ara, sırala','Hedef yanıt süresinin altında'],
+['P','Excel ile toplu {e} içe aktar (bir satırı hatalı)','Hatalı satır raporlanır, diğerleri yüklenir']
+];
+const TIPS={
+c7:'SAP CRM 7.0 için sık kullanılan kontroller: BP (iş ortağı), CRMD_ORDER (belgeler), SMW01 (BDoc durumu), SMQ1/SMQ2 (giden/gelen kuyruklar), R3AC1 (nesne filtreleri), PFCG ve SU53 (yetki), SLG1 (uygulama logu).',
+c4:'SAP Sales/Service Cloud (C4C) için: iş merkezleri ve rol atamaları, Administrator → Web Service Message Monitoring (entegrasyon hataları), kod listesi eşlemeleri, sürüm güncellemesi öncesi regresyon.',
+s4:'S/4HANA Sales/Service için: Fiori uygulamaları ve rol katalogları, BP (iş ortağı), VA21/VA01 (teklif/sipariş), SLG1 (log), AIF hata izleme, Fiori rol tasarımına göre yetki testleri.',
+x:'Platform net değilse önce bunu netleştirin: araçlar, kuyruk izleme ve yetki yapısı platforma göre tamamen değişir.'};
+const PLAT=[['c7','SAP CRM 7.0 (on-premise)'],['c4','SAP Sales/Service Cloud (C4C)'],['s4','S/4HANA Sales / Service'],['x','Henüz bilmiyorum']];
+
+const FLOWS={
+BP:{n:[['Kayıt girişi','Hesap / kontak'],['Mükerrer kontrol','Ünvan, vergi no'],['Kaydet','Numara atanır'],['Replikasyon','Middleware'],['ERP müşteri','Aynı numara']],b:['Mükerrer bulundu','Kayıt engellenir ya da birleştirilir'],c:'Hesap yaşam döngüsü: her ok bir test noktasıdır.'},
+ACT:{n:[['Planlandı'],['Açık'],['Devam ediyor'],['Tamamlandı']],b:['İptal','Neden girilmeli'],c:'Aktivite durum geçişleri. Her geçiş ve yasak geçiş ayrı test edilir.'},
+LEAD:{n:[['Yeni','Kaynak: web, fuar'],['Nitelendiriliyor','Soğuk / ılık'],['Sıcak','Puan ≥ eşik'],['Fırsat','Dönüşüm']],b:['Reddedildi','Ret nedeni zorunlu'],c:'Lead hunisi. Dönüşümde verilerin fırsata eksiksiz aktarımı kritik test noktasıdır.'},
+OPP:{n:[['Keşif','%10'],['İhtiyaç analizi','%25'],['Teklif','%50'],['Pazarlık','%75'],['Kazanıldı','%100']],b:['Kaybedildi','Kayıp nedeni zorunlu'],c:'Satış aşamaları ve olasılık oranları (örnek değerler, projeye göre değişir).'},
+ORD:{n:[['Teklif'],['Onay','İndirim eşiği'],['Sipariş'],['Kredi + ATP','Kontroller'],['ERP / S4'],['Teslimat'],['Fatura']],b:['Kredi bloke','Sipariş ERP’ye gitmez'],c:'Tekliften faturaya. Her geçişte belge numarası ve durum CRM’de doğrulanır.'},
+PRC:{n:[['Liste fiyatı'],['Müşteri özel'],['Miktar skalası'],['Manuel indirim'],['KDV'],['Net tutar']],b:['Limit üstü indirim','Onaya düşer'],c:'Fiyatlandırma şeması: koşullar bu sırayla uygulanır, her adımı ayrı doğrulayın.'},
+SRV:{n:[['Açık','SLA başlar'],['İşlemde'],['Müşteri bekleniyor','SLA durur'],['Çözüldü'],['Kapandı']],b:['SLA ihlali','Eskalasyon'],c:'Servis talebi durumları ve SLA saatinin davranışı.'},
+MKT:{n:[['Segment'],['Hedef grup','İzinsizler çıkar'],['Onay'],['Test gönderimi'],['Gönderim'],['Yanıt'],['Lead']],b:['Abonelikten çıkış','İzin güncellenir'],c:'Kampanya akışı: KVKK/İYS kontrolü hedef grup aşamasında test edilir.'},
+AUTH:{n:[['Kullanıcı'],['Rol','PFCG / iş merkezi'],['Yetki nesnesi'],['Veri kısıtı','Bölge, ekip'],['Ekran ve alan']],b:['Yetkisiz işlem','Engellenir + log'],c:'Yetki zinciri: testte her halkayı hem pozitif hem negatif deneyin.'},
+WF:{n:[['Talep'],['Eşik kontrolü'],['1. onaycı'],['2. onaycı'],['Onaylandı']],b:['Red','Talep sahibine döner'],c:'Çok seviyeli onay akışı.'},
+REP:{n:[['Kaynak veri','CRM kayıtları'],['Yükleme','Anlık / gecelik'],['Model'],['Rapor'],['Dışa aktarım']],b:['Yetki filtresi','Her kullanıcı kendi verisini görür'],c:'Rapor veri hattı: sayıları kaynakla mutlaka karşılaştırın.'},
+UI:{n:[['Giriş'],['Ana sayfa'],['Arama'],['Kayıt ekranı'],['Kaydet']],b:['Oturum zaman aşımı','Veri korunmalı'],c:'Temel kullanıcı yolu: her tarayıcı ve cihazda tekrar edin.'},
+MIG:{n:[['Çıkar','Eski sistem'],['Temizle'],['Dönüştür','Eşleme'],['Yükle'],['Mutabakat'],['İş onayı']],b:['Hatalı kayıt','Hata raporuna düşer'],c:'Veri göçü hattı: her deneme göçünde (mock) baştan sona koşulur.'}
+};
+const EXD={BP:'Ünvan: Ege Örnek Gıda A.Ş. · Vergi no: 1234567890 · İl: İzmir',ACT:'Hesap: Ege Örnek Gıda · Tarih: yarın 10:00–11:00 · Tür: Ziyaret',LEAD:'Kaynak: Web formu · İlgi: Kurumsal paket · Bölge: Ege',OPP:'Beklenen gelir: 250.000 TL · Kapanış: ay sonu · Ürün: Lisans x50',ORD:'Ürün: Örnek Ürün A x 10 · Birim fiyat: 1.200 TL · Teslimat: İzmir depo',PRC:'Liste: 1.000 TL · Skala: 100+ adet %5 · KDV %20',SRV:'Öncelik: Yüksek · SLA: 4 iş saati · Kanal: E-posta',MKT:'Segment: İzmir perakende · Kişi: ~2.400 · Kanal: E-posta',INT:'Nesne: İş ortağı · Yön: CRM → ERP · Mod: Anlık',AUTH:'Rol: Satış temsilcisi · Bölge: Ege · Kullanıcı: TEST_SALES01',WF:'Eşik: %10 indirim · Onaycı: Satış müdürü',REP:'Rapor: Pipeline · Dönem: Bu çeyrek · Bölge: Ege',UI:'Tarayıcı: Chrome, Edge, Safari · Cihaz: Laptop + telefon',MIG:'Nesne: Hesaplar · Kaynak kayıt: 48.210 · Mock: 1. deneme'};
+const PALL={P:'var(--ok)',N:'var(--bad)',S:'var(--warn)',Y:'var(--vio)',E:'var(--acc)',F:'var(--mut)'};
+
+const nz=x=>x.toLocaleLowerCase('tr').replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/i̇/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u');
+const esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const chat=document.getElementById('chat');
+let st={plat:null,mods:new Set(),phs:new Set()},lastRows=[];
+const say=(h,who='k')=>{const d=document.createElement('div');d.className='m '+who;d.innerHTML='<div class="bub">'+h+'</div>';chat.appendChild(d);d.scrollIntoView({behavior:'smooth',block:'start'});return d};
+const chips=a=>'<div class="chips">'+a.map(([l,q,p])=>`<button type="button" class="chip${p?' p':''}" data-q="${esc(q)}">${esc(l)}</button>`).join('')+'</div>';
+const tag=y=>`<span class="tg t${y}">${T[y]}</span>`;
+const lbl=t=>`<span class="lbl">${t}</span>`;
+const flow=(id)=>{const f=FLOWS[id];if(!f)return'';return `<div class="fig"><div class="flow">${f.n.map((x,i)=>`${i?'<span class="arr"></span>':''}<div class="node${i==0?' s':''}${i==f.n.length-1?' e':''}">${esc(x[0])}${x[1]?`<small>${esc(x[1])}</small>`:''}</div>`).join('')}</div>${f.b?`<div class="branch">İstisna yolu →<span class="node x">${esc(f.b[0])}<small>${esc(f.b[1])}</small></span></div>`:''}<p class="cap">${esc(f.c)}</p></div>`};
+const arch=()=>`<div class="fig"><div class="arch"><div class="box c"><b>SAP CRM</b><span>Hesap, fırsat, teklif, sipariş, talep</span></div><div class="link">BP, sipariş<i></i>durum, fatura</div><div class="box"><b>Middleware</b><span>BDoc / IDoc / CPI / OData kuyrukları</span></div><div class="link">anlık + toplu<i></i>hata kuyruğu</div><div class="box"><b>ERP / S/4HANA</b><span>Müşteri, malzeme, fiyat, teslimat, fatura</span></div></div><p class="cap">Her ok iki yönlü test edilir: başarılı aktarım, hatalı mesaj, karşı sistem kapalıyken davranış.</p></div>`;
+const sla=()=>`<div class="fig"><div style="position:relative"><div class="sla"><div style="flex:1;background:var(--acc)">Açık</div><div style="flex:1.2;background:#3d7bff">İşlemde</div><div class="pause" style="flex:1.4">Beklemede<br>saat durur</div><div style="flex:.9;background:#3d7bff">İşlemde</div><div style="flex:.6;background:var(--ok)">Çözüldü</div></div></div><div class="slaax"><span>Cuma 17:00</span><span>Hafta sonu sayılmaz</span><span>Hedef: 4 iş saati</span></div><p class="cap">SLA çubuğu: taralı bölüm SLA sayacının durduğu süredir. Test: hedef zaman damgası iş takvimine göre doğru mu?</p></div>`;
+const vmodel=()=>`<div class="fig"><div class="vm"><div class="node s">Gereksinim / fit-gap</div><div class="ln"></div><div class="node e">Kullanıcı kabul (UAT)</div><div class="node s">Süreç tasarımı</div><div class="ln"></div><div class="node e">Uçtan uca + SIT</div><div class="node s">Teknik tasarım</div><div class="ln"></div><div class="node e">Fonksiyonel test</div><div class="node s">Geliştirme</div><div class="ln"></div><div class="node e">Birim test</div></div><p class="cap">V-model: soldaki her tasarım adımı, sağda kendi test aşamasıyla doğrulanır. Kesikli çizgi = izlenebilirlik.</p></div>`;
+const tl=on=>`<div class="fig" style="padding:14px 10px"><div class="tl">${PH.map((p,i)=>`<button type="button" class="ph${p.id===on?' on':''}" data-n="${i+1}" data-q="${esc(p.n)}">${esc(p.n)}</button>`).join('')}</div><p class="cap" style="padding:0 8px">Proje boyunca test aşamaları. Bir aşamaya dokunun.</p></div>`;
+const cards=(rows,open=2)=>`<div class="scs">${rows.map((r,i)=>`<details class="sc"${i<open?' open':''}><summary><span class="sid">${r.id}</span>${tag(r.y)}<span class="st">${esc(r.t)}</span></summary><div class="scb"><ol class="steps">${r.a.split('→').map(x=>`<li>${esc(x.trim())}</li>`).join('')}</ol><div class="exp"><b>Beklenen sonuç</b>${esc(r.e)}</div></div></details>`).join('')}</div>`;
+const qs=a=>`<ol class="qs">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`;
+const rowsOf=(m,f)=>m.sc.map((x,i)=>({...x,id:`${m.id}-${String(i+1).padStart(2,'0')}`})).filter(r=>!f||r.y===f);
+const varsOf=m=>G.map((g,i)=>({y:g[0],t:g[1].replace('{e}',m.ent).split(' (')[0],a:g[1].replace('{e}',m.ent),e:g[2],id:`${m.id}-V${String(i+1).padStart(2,'0')}`}));
+const tip=()=>st.plat?`<div class="tip"><b>Platform ipucu.</b> ${TIPS[st.plat]}</div>`:'';
+const bars=rows=>{const mx=Math.max(1,...Object.keys(T).map(y=>rows.filter(r=>r.y===y).length));return `<div class="bars">${Object.keys(T).map(y=>{const n=rows.filter(r=>r.y===y).length;return `<div class="bar"><span>${T[y]}</span><span class="tr"><i style="width:${n/mx*100}%;background:${PALL[y]}"></i></span><span class="n">${n}</span></div>`}).join('')}</div>`};
+const example=m=>{const r=rowsOf(m)[0];return `<div class="ex"><dl class="kv"><dt>Test kodu</dt><dd><b>${r.id}</b> · ${esc(r.t)}</dd><dt>Ön koşul</dt><dd>Test kullanıcısı aktif, ilgili ana veriler hazır, ortam: QA</dd><dt>Test verisi</dt><dd>${esc(EXD[m.id])}</dd><dt>Adımlar</dt><dd>${esc(r.a)}</dd><dt>Beklenen</dt><dd>${esc(r.e)}</dd><dt>Gerçekleşen</dt><dd>Test sırasında doldurulur</dd><dt>Durum</dt><dd><span class="badge">Koşulmadı</span></dd></dl><p class="note">Örnek veriler uydurmadır; kendi test verinizle değiştirin.</p></div>`};
+
+const nav=document.getElementById('nav');
+nav.innerHTML=`<h4>Modüller</h4>${M.map(m=>`<button type="button" data-q="${esc(m.n)}"><span class="dot"></span>${esc(m.n)}</button>`).join('')}<h4>Test aşamaları</h4>${PH.map(p=>`<button type="button" data-q="${esc(p.n)}"><span class="dot"></span>${esc(p.n)}</button>`).join('')}<h4>Konular</h4>${[['V-model ve test aşamaları','v-model'],['Uçtan uca süreçler','uçtan uca'],['Hata yönetimi','hata yönetimi'],['Test otomasyonu','otomasyon'],['Test dokümanları','dokümanlar'],['Test verisi','test verisi'],['Ana sayfa','başla']].map(([a,b])=>`<button type="button" data-q="${b}"><span class="dot"></span>${a}</button>`).join('')}`;
+
+function home(){
+say(`${lbl('Hoş geldiniz')}<h2>SAP CRM projeniz için hangi testlere ihtiyacınız var?</h2><p class="lead">Modül, test aşaması ya da soru yazın; şema, örnek test vakası, adım adım senaryolar ve ekibe sorulacak sorularla cevaplarım.</p>
+${tl()}
+<h3>Modüller</h3><div class="cards">${M.map(m=>`<button type="button" class="mc" data-q="${esc(m.n)}"><b>${esc(m.n)}</b><span>${m.sc.length} senaryo + ${G.length} varyant</span></button>`).join('')}</div>
+${chips([['Baştan sona test planı oluştur','plan oluştur',1],['V-model','v-model'],['Uçtan uca süreçler','uçtan uca'],['Hata yönetimi','hata yönetimi']])}`);
+}
+function showMod(m,f){
+const r=rowsOf(m,f);lastRows=r;const types=[...new Set(m.sc.map(x=>x.y))];
+say(`${lbl('Modül')}<h2>${esc(m.n)}${f?' · '+T[f]:''}</h2><p class="lead">${r.length} senaryo. Kodları test aracınıza aynen taşıyabilirsiniz.</p>
+<h3>Süreç şeması</h3>${m.id==='INT'?arch():flow(m.id)}${m.id==='SRV'?sla():''}
+<h3>Örnek test vakası</h3>${example(m)}
+<h3>Senaryolar</h3>${cards(r)}
+<h3>Senaryo dağılımı</h3>${bars(r)}
+<h3>Ekibe sorulması gereken sorular</h3>${qs(m.q)}${tip()}
+${chips([['+ '+G.length+' ek varyant üret','varyant '+m.id,1],...types.filter(t=>t!==f).map(t=>[T[t]+' senaryolar',m.n+' '+T[t].toLowerCase()]),['Excel için kopyala','kopyala']])}`);
+}
+function showVar(m){const r=varsOf(m);lastRows=r;say(`${lbl('Ek varyantlar')}<h2>${esc(m.n)}: genel kontroller</h2><p class="lead">Her CRM nesnesine uygulanması gereken kontroller, “${esc(m.ent)}” için uyarlandı.</p>${bars(r)}<div style="height:12px"></div>${cards(r,1)}${chips([['Excel için kopyala','kopyala',1],['Ana sayfa','başla']])}`)}
+function showPh(p){
+const sug={SIT:['INT','ORD','BP'],SEC:['AUTH'],MIGT:['MIG'],PERF:['UI','INT','REP'],UAT:['OPP','SRV','ORD'],E2E:['OPP','SRV','ORD'],FUT:['BP','OPP','SRV'],REG:['ORD','PRC','INT']}[p.id]||[];
+say(`${lbl('Test aşaması')}<h2>${esc(p.n)}</h2><p class="lead">${esc(p.d)}</p>${tl(p.id)}
+<h3>Kontrol listesi</h3><ul class="chk">${p.c.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+<h3>Giriş ve çıkış kriteri</h3><div class="fig"><div class="flow"><div class="node s">Giriş<small>Önceki aşama kapalı, ortam ve veri hazır</small></div><span class="arr"></span><div class="node">Koşum<small>Senaryolar + hata kaydı</small></div><span class="arr"></span><div class="node e">Çıkış<small>≥ %95 koşulmuş, kritik hata yok, onay</small></div></div></div>
+${p.id==='E2E'?'<h3>Örnek akış</h3>'+e2e(FL[0],0):''}${p.id==='SIT'?'<h3>Entegrasyon mimarisi</h3>'+arch():''}${p.id==='REQ'||p.id==='UT'?'<h3>V-model</h3>'+vmodel():''}
+${sug.length?'<h3>Bu aşamada öne çıkan modüller</h3>'+chips(sug.map(id=>{const m=M.find(x=>x.id===id);return[m.n,m.n]})):''}`);
+}
+const e2e=(f,i)=>`<div class="fig"><p style="margin:0 0 10px;font-weight:700">E2E-${String(i+1).padStart(2,'0')} · ${esc(f.n)}</p><div class="flow">${f.a.map((x,j)=>`${j?'<span class="arr"></span>':''}<div class="node${j==0?' s':''}${j==f.a.length-1?' e':''}" style="max-width:200px"><small>Adım ${j+1}</small>${esc(x)}</div>`).join('')}</div></div>`;
+function showFlows(){say(`${lbl('Uçtan uca')}<h2>Uçtan uca süreç testleri</h2><p class="lead">Her akış tek bir test olarak koşulur; bir adımın çıktısı bir sonrakinin girdisidir.</p>${FL.map(e2e).join('')}<div class="tip"><b>Öneri.</b> Her akışı üç veri setiyle koşun: standart müşteri, istisnai müşteri (bloke, kredi limiti dolu) ve yabancı para birimli müşteri.</div>`)}
+const INFO={
+hata:()=>`${lbl('Kalite')}<h2>Hata (defect) yönetimi</h2><h3>Önem dereceleri</h3><div class="grid4"><div class="sev" style="border-color:var(--bad)"><b>Kritik</b><span>Süreç durur, geçici çözüm yok. Örn: sipariş ERP’ye gitmiyor.</span></div><div class="sev" style="border-color:var(--warn)"><b>Yüksek</b><span>Süreç aksar, zor bir geçici çözüm var.</span></div><div class="sev" style="border-color:var(--acc)"><b>Orta</b><span>İşlev hatalı ama iş devam ediyor.</span></div><div class="sev" style="border-color:var(--mut)"><b>Düşük</b><span>Görsel veya metin hatası.</span></div></div>
+<h3>Hata yaşam döngüsü</h3><div class="fig"><div class="flow"><div class="node s">Yeni</div><span class="arr"></span><div class="node">Atandı</div><span class="arr"></span><div class="node">Çözüldü</div><span class="arr"></span><div class="node">Yeniden test</div><span class="arr"></span><div class="node e">Kapandı</div></div><div class="branch">Yeniden test başarısız →<span class="node x">Tekrar atandı<small>Döngü baştan</small></span></div></div>
+<h3>Örnek hata kaydı</h3><div class="ex"><dl class="kv"><dt>Hata no</dt><dd><b>DEF-0142</b></dd><dt>Senaryo</dt><dd>ORD-07 · Siparişin ERP/S4’e aktarımı, adım 2</dd><dt>Önem</dt><dd><span class="tg tN">Kritik</span></dd><dt>Ortam</dt><dd>QA · Rol: Satış temsilcisi</dd><dt>Beklenen</dt><dd>Sipariş ERP’de oluşur</dd><dt>Gerçekleşen</dt><dd>Mesaj kuyrukta hata ile bekliyor: “Ödeme koşulu eşlenemedi”</dd><dt>Ek</dt><dd>Ekran görüntüsü, belge no, kuyruk adı</dd></dl><p class="note">Örnek kayıttır.</p></div>`,
+oto:()=>`${lbl('Otomasyon')}<h2>Test otomasyonu</h2><p class="lead">Regresyon seti, API testleri ve toplu veri doğrulamaları otomasyona en uygun alanlardır. Sık değişen ekranlar ve tek seferlik UAT senaryoları manuel kalmalıdır.</p><h3>Ne otomatikleşmeli?</h3>${bars([...Array(9)].map(()=>({y:'E'})).concat([...Array(7)].map(()=>({y:'P'})),[...Array(3)].map(()=>({y:'S'}))))}<p class="note">Yukarıdaki çubuklar örnek bir önceliklendirmedir: Entegrasyon (API) > Pozitif ana akışlar > Sınır kontrolleri.</p><h3>Yaygın araçlar</h3><ul class="chk"><li>SAP Cloud ALM / Solution Manager test yönetimi</li><li>Tricentis Tosca</li><li>CBTA ve eCATT (eski on-premise)</li><li>API testleri için Postman benzeri araçlar</li></ul><h3>Sorulacak sorular</h3>${qs(['Hangi senaryolar her sürümde tekrar koşulacak?','Test verisi her koşudan önce nasıl sıfırlanacak?','Scriptlerin bakımını kim yapacak?'])}`,
+dok:()=>`${lbl('Dokümantasyon')}<h2>Test dokümanları</h2><div class="fig"><div class="flow"><div class="node s">Test stratejisi<small>Kapsam, roller, araçlar</small></div><span class="arr"></span><div class="node">Test planı<small>Takvim, kaynak</small></div><span class="arr"></span><div class="node">RTM<small>Gereksinim ↔ test</small></div><span class="arr"></span><div class="node">Senaryolar<small>Adım, veri, beklenen</small></div><span class="arr"></span><div class="node">Hata kayıtları</div><span class="arr"></span><div class="node e">Kapanış raporu<small>UAT onayı</small></div></div><p class="cap">Doküman zinciri: her doküman bir sonrakini besler.</p></div><div class="tip"><b>KVKK.</b> Gerçek müşteri verisi test ortamına alınacaksa maskeleme veya anonimleştirme yapılmalı.</div>`,
+veri:()=>`${lbl('Test verisi')}<h2>Test verisi hazırlığı</h2><div class="grid4"><div class="sev" style="border-color:var(--acc)"><b>Müşteriler</b><span>Standart, bloke, kredi limiti dolu, yabancı</span></div><div class="sev" style="border-color:var(--ok)"><b>Ürünler</b><span>Stoklu, stoksuz, skalalı, farklı KDV</span></div><div class="sev" style="border-color:var(--vio)"><b>Kullanıcılar</b><span>Her rol için ayrı test kullanıcısı</span></div><div class="sev" style="border-color:var(--warn)"><b>Gizlilik</b><span>Gerçek veri kullanılırsa maskeleme zorunlu</span></div></div>`,
+vm:()=>`${lbl('Metodoloji')}<h2>V-model ve test aşamaları</h2><p class="lead">SAP projelerinde testler tasarım adımlarına karşılık gelir. Önce tasarlanan, sonda test edilir.</p>${vmodel()}<h3>Proje zaman çizelgesi</h3>${tl()}`
+};
+function plan(){st={plat:null,mods:new Set(),phs:new Set()};say(`${lbl('Adım 1 / 3')}<h2>Hangi SAP platformu?</h2><p class="lead">Araçlar, kuyruk izleme ve yetki yapısı platforma göre değişir.</p>${chips(PLAT.map(p=>[p[1],'@plat '+p[0]]))}`)}
+function wiz2(){say(`${lbl('Adım 2 / 3')}<h2>Kapsamdaki modüller</h2><p class="lead">Birden fazla seçebilirsiniz.</p><div class="chips">${M.map(m=>`<button type="button" class="chip" data-m="${m.id}" aria-pressed="false">${esc(m.n)}</button>`).join('')}</div><div class="chips"><button type="button" class="chip" data-all="m">Hepsini seç</button><button type="button" class="chip p" data-next="3">Devam</button></div>`)}
+function wiz3(){say(`${lbl('Adım 3 / 3')}<h2>Planlanacak test aşamaları</h2><div class="chips">${PH.map(p=>`<button type="button" class="chip" data-p="${p.id}" aria-pressed="false">${esc(p.n)}</button>`).join('')}</div><div class="chips"><button type="button" class="chip" data-all="p">Hepsini seç</button><button type="button" class="chip p" data-next="4">Planı oluştur</button></div>`)}
+function result(){
+const ms=M.filter(m=>st.mods.has(m.id)),ps=PH.filter(p=>st.phs.has(p.id));
+const rows=ms.flatMap(m=>rowsOf(m)),vr=ms.flatMap(m=>varsOf(m));lastRows=[...rows,...vr];
+say(`${lbl('Test planı')}<h2>Test planınız hazır</h2><div class="stats"><div class="stat"><b>${lastRows.length}</b><span>senaryo</span></div><div class="stat"><b>${ms.length}</b><span>modül</span></div><div class="stat"><b>${ps.length}</b><span>aşama</span></div><div class="stat"><b>${FL.length}</b><span>uçtan uca akış</span></div></div>
+<h3>Senaryo dağılımı</h3>${bars(lastRows)}${tip()}
+<h3>Aşama sırası</h3><div class="fig"><div class="flow">${ps.map((p,i)=>`${i?'<span class="arr"></span>':''}<div class="node${i==0?' s':''}${i==ps.length-1?' e':''}"><small>${i+1}. aşama</small>${esc(p.n)}</div>`).join('')}</div></div>
+${ms.map(m=>`<h3>${esc(m.n)}</h3>${m.id==='INT'?arch():flow(m.id)}${cards(rowsOf(m),0)}`).join('')}
+<h3>Her modül için ek kontroller</h3>${cards(vr,0)}
+<h3>Ekibe sorulacak sorular</h3>${ms.map(m=>`<p><b>${esc(m.n)}</b></p>${qs(m.q)}`).join('')}
+${chips([['Tüm senaryoları Excel için kopyala','kopyala',1],['Uçtan uca akışlar','uçtan uca'],['Hata yönetimi','hata yönetimi']])}`);
+}
+function copy(){
+if(!lastRows.length){say('<p>Kopyalanacak senaryo yok. Önce bir modül ya da plan açın.</p>');return}
+const tsv=['Kod\tTür\tSenaryo\tAdımlar\tBeklenen sonuç\tDurum\tTest eden\tNot',...lastRows.map(r=>[r.id,T[r.y],r.t,r.a,r.e,'Koşulmadı','',''].join('\t'))].join('\n');
+const fb=()=>say(`<p>Otomatik kopyalama engellendi. Metni seçip kopyalayın, Excel’e yapıştırın:</p><textarea readonly>${esc(tsv)}</textarea>`);
+try{navigator.clipboard.writeText(tsv).then(()=>say(`${lbl('Kopyalandı')}<p><b>${lastRows.length} satır panoda.</b> Excel veya Google Sheets’e yapıştırın; durum, test eden ve not sütunları boş gelir.</p>`),fb)}catch(e){fb()}
+}
+function route(raw){
+const q=nz(raw.trim());if(!q)return;closeNav();
+if(q.startsWith('@plat ')){st.plat=q.slice(6);say(esc(PLAT.find(p=>p[0]===st.plat)[1]),'u');wiz2();return}
+say(esc(raw),'u');
+if(/^(basla|bastan|menu|ana sayfa|yardim|merhaba|selam)/.test(q)){home();return}
+if(/plan|bastan sona|tum test/.test(q)){plan();return}
+if(q.startsWith('varyant ')){const m=M.find(x=>x.id===raw.split(' ')[1]);if(m){showVar(m);return}}
+if(/kopyala|excel|disa aktar/.test(q)&&!/rapor/.test(q)){copy();return}
+if(/v-model|v model|metodoloji|asamalar neler|test asamalari/.test(q)){say(INFO.vm());return}
+if(/uctan uca|e2e|end to end|lead to cash|lead-to-cash/.test(q)&&!/asama|kriter|test$/.test(q)){showFlows();return}
+if(/hata yonetimi|defect|bug|hata kaydi|severity|onem derece/.test(q)){say(INFO.hata());return}
+if(/otomasyon|automation|tosca|ecatt|cbta/.test(q)){say(INFO.oto());return}
+if(/dokuman|strateji|rtm|izlenebilirlik|sablon/.test(q)){say(INFO.dok());return}
+if(/test verisi|maskele/.test(q)){say(INFO.veri());return}
+let f=null;for(const [k,v] of Object.entries(T))if(q.includes(nz(v)))f=k;
+const sc=x=>x.kw.reduce((a,k)=>a+(new RegExp('(^|\\W)'+k.replace(/[/.*+?^${}()|[\]\\]/g,'\\$&')).test(q)?k.length:0),0)+(q.includes(nz(x.n))?50:0);
+const bm=M.map(m=>[m,sc(m)]).sort((a,b)=>b[1]-a[1])[0],bp=PH.map(p=>[p,sc(p)]).sort((a,b)=>b[1]-a[1])[0];
+if(f&&bm[1]>0&&bm[0].kw.some(k=>nz(T[f]).includes(k)))f=null;
+if(bp[1]>bm[1]){showPh(bp[0]);return}
+if(bm[1]>0){showMod(bm[0],f&&bm[0].sc.some(x=>x.y===f)?f:null);return}
+if(f){const r=M.flatMap(m=>rowsOf(m,f));lastRows=r;say(`${lbl(T[f])}<h2>Tüm modüllerde ${T[f].toLowerCase()} senaryolar</h2><p class="lead">${r.length} senaryo.</p>${cards(r,1)}${chips([['Excel için kopyala','kopyala',1]])}`);return}
+say(`<p>Bunu tam eşleştiremedim. Bir modül (hesap, fırsat, teklif, servis, kampanya, entegrasyon, yetki…), bir aşama (SIT, UAT, regresyon, cutover…) ya da “plan oluştur” yazmayı deneyin.</p>${chips([['Ana sayfa','başla'],['Test planı oluştur','plan oluştur',1],['Uçtan uca','uçtan uca']])}`);
+}
+const side=document.getElementById('side'),scrim=document.getElementById('scrim');
+const closeNav=()=>{side.classList.remove('open');scrim.classList.remove('open')};
+document.getElementById('mb').addEventListener('click',()=>{side.classList.add('open');scrim.classList.add('open')});
+scrim.addEventListener('click',closeNav);
+document.body.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+if(b.dataset.q){route(b.dataset.q);return}
+if(b.dataset.m||b.dataset.p){const set=b.dataset.m?st.mods:st.phs,k=b.dataset.m||b.dataset.p;set.has(k)?set.delete(k):set.add(k);b.classList.toggle('on');b.setAttribute('aria-pressed',b.classList.contains('on'));return}
+if(b.dataset.all){const box=b.closest('.bub'),isM=b.dataset.all==='m';box.querySelectorAll(isM?'[data-m]':'[data-p]').forEach(x=>{(isM?st.mods:st.phs).add(x.dataset.m||x.dataset.p);x.classList.add('on')});return}
+if(b.dataset.next==='3'){if(!st.mods.size){say('<p>En az bir modül seçin.</p>');return}say(st.mods.size+' modül seçildi','u');wiz3();return}
+if(b.dataset.next==='4'){if(!st.phs.size){say('<p>En az bir aşama seçin.</p>');return}say(st.phs.size+' aşama seçildi','u');result();return}
+});
+document.getElementById('f').addEventListener('submit',e=>{e.preventDefault();const i=document.getElementById('q');route(i.value);i.value=''});
+home();
+}
+</script>
+</body>
+</html>
